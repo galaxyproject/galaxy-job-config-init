@@ -1,4 +1,4 @@
-import enum
+import sys
 from dataclasses import dataclass
 from typing import (
     List,
@@ -11,8 +11,13 @@ from typing_extensions import (
     Unpack,
 )
 
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    from backports.strenum import StrEnum
 
-class Runner(enum.StrEnum):
+
+class Runner(StrEnum):
     LOCAL = "local"
     SLURM = "slurm"
     DRMAA = "drmaa"
