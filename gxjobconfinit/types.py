@@ -41,6 +41,7 @@ class CliConfigArgs(TypedDict, total=False):
     singularity_sudo: NotRequired[Optional[bool]]
     singularity_sudo_cmd: NotRequired[Optional[str]]
     singularity_extra_volume: NotRequired[Optional[List[str]]]
+    tmp_dir: NotRequired[bool]
 
 
 @dataclass
@@ -60,6 +61,7 @@ class ConfigArgs:
     singularity_sudo: Optional[bool] = None
     singularity_sudo_cmd: Optional[str] = None
     singularity_extra_volume: Optional[List[str]] = None
+    tmp_dir: Optional[bool] = None
 
     @staticmethod
     def from_dict(**data: Unpack[CliConfigArgs]) -> "ConfigArgs":
@@ -79,4 +81,5 @@ class ConfigArgs:
             singularity_sudo=data.get("singularity_sudo", None),
             singularity_sudo_cmd=data.get("singularity_sudo_cmd", None),
             singularity_extra_volume=data.get("singularity_extra_volume", []),
+            tmp_dir=data.get("tmp_dir", []),
         )
