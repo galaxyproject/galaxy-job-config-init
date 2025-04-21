@@ -81,5 +81,5 @@ class ConfigArgs:
             singularity_sudo=data.get("singularity_sudo", None),
             singularity_sudo_cmd=data.get("singularity_sudo_cmd", None),
             singularity_extra_volume=data.get("singularity_extra_volume", []),
-            tmp_dir=data.get("tmp_dir", []),
+            tmp_dir=data.get("tmp_dir", True),
         )
