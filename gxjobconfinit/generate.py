@@ -85,6 +85,9 @@ K8S_ENVIRONMENT_TEMPLATE = """
 
 
 COMMON_ENVIRONMENT_TEMPLATE = """
+{%- if tmp_dir %}
+tmp_dir: true
+{%- endif %}
 {%- if docker_config.enabled %}
 docker_enabled: true
 {%- if docker_config.sudo %}
@@ -281,11 +284,13 @@ def build_job_config(
     dev_context = dev_context or DevelopmentContext(None, [])
     runner = config.runner
     tpv = config.tpv
+    tmp_dir = config.tmp_dir
     galaxy_version = config.galaxy_version or "25.0"
     docker_config = to_docker_config(dev_context, config)
     singularity_config = to_singularity_config(dev_context, config)
     environment_docker_stuff = render(
         COMMON_ENVIRONMENT_TEMPLATE,
+        tmp_dir=tmp_dir,
         docker_config=docker_config,
         singularity_config=singularity_config,
     )
