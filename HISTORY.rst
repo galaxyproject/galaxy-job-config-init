@@ -4,6 +4,13 @@ History
 .. to_doc
 
 ---------
+0.1.2
+---------
+
+Add tmp_dir config option thanks to @Smeds. https://github.com/galaxyproject/galaxy-job-config-init/pull/1
+
+
+---------
 0.1.1
 ---------
 
