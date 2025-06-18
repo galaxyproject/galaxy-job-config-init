@@ -25,9 +25,7 @@ runners:
     # modify the number of threads working on local jobs here
     # workers: 4
 {{ additional_runners }}
-handling:
-  assign:
-    - db-skip-locked
+{{ handling_config}}
 
 execution:
   default: {{ default_environment }}
@@ -35,6 +33,12 @@ execution:
 tools:
   - class: local
     environment: local
+"""
+
+DEFAULT_HANDLING_CONFIG = """
+handling:
+  assign:
+    - db-skip-locked
 """
 
 DRMAA_RUNNER_TEMPLATE = """
@@ -85,8 +89,12 @@ K8S_ENVIRONMENT_TEMPLATE = """
 
 
 COMMON_ENVIRONMENT_TEMPLATE = """
-{%- if tmp_dir %}
+{%- if tmp_dir and tmp_dir != "false" %}
+{%- if tmp_dir == "true" %}
 tmp_dir: true
+{%- else %}
+tmp_dir: {{ tmp_dir }}
+{%- endif %}
 {%- endif %}
 {%- if docker_config.enabled %}
 docker_enabled: true
@@ -331,12 +339,19 @@ def build_job_config(
     if tpv:
         default_environment = "tpv"
 
+    # Configure handling section
+    if config.all_in_one_handling:
+        handling_config = ""  # No separate handling section for all-in-one
+    else:
+        handling_config = DEFAULT_HANDLING_CONFIG
+
     config_str = render(
         TEMPLATE,
         additional_runners=additional_runners,
         additional_environments=additional_environments,
         local_environment=local_environment,
         default_environment=default_environment,
+        handling_config=handling_config,
     )
     yaml.safe_load(config_str)  # try loading it just to assure we're building valid YAML
     return config_str
