@@ -23,6 +23,7 @@ help:
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
 	@echo "setup-venv - setup a development virtualenv in current directory."
+	@echo "format - format code with black, isort and ruff"
 	@echo "lint-dist - twine check dist results, including validating README content"
 	@echo "dist - package project for PyPI distribution"
 
@@ -91,6 +92,11 @@ push-release:
 	echo "Makefile doesn't manually push release."
 
 release: release-local push-release
+
+format:
+	$(IN_VENV) isort .
+	$(IN_VENV) black .
+	$(IN_VENV) ruff check --fix .
 
 mypy:
 	mypy .

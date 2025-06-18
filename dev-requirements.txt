@@ -4,6 +4,9 @@
 # For dev
 sphinx
 mypy
+black
+isort
+ruff
 
 # For release
 build
