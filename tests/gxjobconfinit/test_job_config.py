@@ -47,9 +47,7 @@ def test_build_job_config_slurm_with_singularity():
 
 
 def test_build_job_config_slurm_with_singularity_and_sudo():
-    config_dict = build_to_yaml(
-        runner=Runner.SLURM, singularity=True, singularity_sudo=True
-    )
+    config_dict = build_to_yaml(runner=Runner.SLURM, singularity=True, singularity_sudo=True)
     slurm_env = config_dict["execution"]["environments"]["slurm"]
     assert slurm_env
     assert slurm_env["runner"] == "slurm"
@@ -58,9 +56,7 @@ def test_build_job_config_slurm_with_singularity_and_sudo():
 
 
 def test_build_job_config_slurm_with_tmp_dir():
-    config_dict = build_to_yaml(
-        runner=Runner.SLURM, singularity=True, tmp_dir=True
-    )
+    config_dict = build_to_yaml(runner=Runner.SLURM, singularity=True, tmp_dir=True)
     slurm_env = config_dict["execution"]["environments"]["slurm"]
     assert slurm_env
     assert slurm_env["runner"] == "slurm"

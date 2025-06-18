@@ -4,6 +4,10 @@
 # For dev
 sphinx
 mypy
+black
+isort
+ruff
+types-PyYAML
 
 # For release
 build
