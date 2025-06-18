@@ -23,6 +23,8 @@ HELP_SINGULARITY_CMD = "Command used to execute singularity (defaults to 'singul
 HELP_SINGULARITY_SUDO = "Use sudo with Singularity."
 HELP_SINGULARITY_SUDO_CMD = "Singularity sudo command."
 HELP_SINGULARITY_EXTRA_VOLUME = "Extra Singularity volumes."
+HELP_TMP_DIR = "Configure temporary directory handling. Use 'true' for Galaxy-managed temp dirs, or specify shell commands/variables for custom temp directory allocation (e.g., '$DRM_VAR' or '$(mktemp -d /scratch/gxyXXXXXX)'). Defaults to true."
+HELP_ALL_IN_ONE_HANDLING = "Use all-in-one job handling configuration. No separate processes are required to handle jobs or workflows. Recommended for temporary or single user Galaxy instances such as created by planemo."
 
 
 def config_args(argv: List[str]):
@@ -44,6 +46,8 @@ def config_args(argv: List[str]):
         singularity_sudo=args.singularity_sudo,
         singularity_sudo_cmd=args.singularity_sudo_cmd,
         singularity_extra_volume=args.singularity_extra_volume,
+        tmp_dir=args.tmp_dir,
+        all_in_one_handling=args.all_in_one_handling,
     )
     return config_args
 
@@ -70,4 +74,6 @@ def argparser() -> argparse.ArgumentParser:
         nargs="*",
         help=HELP_SINGULARITY_EXTRA_VOLUME,
     )
+    parser.add_argument("--tmp-dir", type=str, default="true", help=HELP_TMP_DIR)
+    parser.add_argument("--all-in-one-handling", action="store_true", help=HELP_ALL_IN_ONE_HANDLING)
     return parser
