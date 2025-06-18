@@ -205,9 +205,7 @@ class SingularityConfig:
     singularity_cmd: str
 
 
-def to_docker_config(
-    dev_context: DevelopmentContext, config: ConfigArgs
-) -> DockerConfig:
+def to_docker_config(dev_context: DevelopmentContext, config: ConfigArgs) -> DockerConfig:
     enabled = bool(config.docker)
     host = config.docker_host
     sudo = config.docker_sudo or False
@@ -222,14 +220,8 @@ def to_docker_config(
     docker_volumes_str = "$defaults"
     if volumes:
         # exclude tool directories, these are mounted :ro by $defaults
-        all_tool_dirs = {
-            os.path.dirname(tool_path) for tool_path in dev_context.all_tool_paths
-        }
-        extra_volumes_str = ",".join(
-            str(v)
-            for v in create_docker_volumes(volumes)
-            if v.path not in all_tool_dirs
-        )
+        all_tool_dirs = {os.path.dirname(tool_path) for tool_path in dev_context.all_tool_paths}
+        extra_volumes_str = ",".join(str(v) for v in create_docker_volumes(volumes) if v.path not in all_tool_dirs)
         docker_volumes_str = f"{docker_volumes_str},{extra_volumes_str}"
 
     return DockerConfig(
@@ -243,9 +235,7 @@ def to_docker_config(
     )
 
 
-def to_singularity_config(
-    dev_context: DevelopmentContext, config: ConfigArgs
-) -> SingularityConfig:
+def to_singularity_config(dev_context: DevelopmentContext, config: ConfigArgs) -> SingularityConfig:
     enabled = bool(config.singularity)
     sudo = config.singularity_sudo or False
     sudo_cmd = str(config.singularity_sudo_cmd or "sudo")
@@ -258,14 +248,8 @@ def to_singularity_config(
     singularity_volumes_str = "$defaults"
     if volumes:
         # exclude tool directories, these are mounted :ro by $defaults
-        all_tool_dirs = {
-            os.path.dirname(tool_path) for tool_path in dev_context.all_tool_paths
-        }
-        extra_volumes_str = ",".join(
-            str(v)
-            for v in create_docker_volumes(volumes)
-            if v.path not in all_tool_dirs
-        )
+        all_tool_dirs = {os.path.dirname(tool_path) for tool_path in dev_context.all_tool_paths}
+        extra_volumes_str = ",".join(str(v) for v in create_docker_volumes(volumes) if v.path not in all_tool_dirs)
         singularity_volumes_str = f"{singularity_volumes_str},{extra_volumes_str}"
 
     return SingularityConfig(
@@ -305,58 +289,40 @@ def build_job_config(
     if runner == Runner.SLURM:
         additional_runners += SLURM_RUNNER_TEMPLATE
         default_environment = "slurm"
-        additional_environments += SLURM_ENVIRONMENT_TEMPLATE + indent(
-            environment_docker_stuff, " " * 6
-        )
+        additional_environments += SLURM_ENVIRONMENT_TEMPLATE + indent(environment_docker_stuff, " " * 6)
         tpv_runner_destination_template = TPV_DESTINATION_SLURM
     elif runner == Runner.K8S:
         additional_runners += K8S_RUNNER_TEMPLATE
-        additional_environments += K8S_ENVIRONMENT_TEMPLATE + indent(
-            environment_docker_stuff, " " * 6
-        )
+        additional_environments += K8S_ENVIRONMENT_TEMPLATE + indent(environment_docker_stuff, " " * 6)
         default_environment = "k8s"
         tpv_runner_destination_template = TPV_DESTINATION_K8S
     elif runner == Runner.DRMAA:
         additional_runners += DRMAA_RUNNER_TEMPLATE
-        additional_environments += DRMAA_ENVIRONMENT_TEMPLATE + indent(
-            environment_docker_stuff, " " * 6
-        )
+        additional_environments += DRMAA_ENVIRONMENT_TEMPLATE + indent(environment_docker_stuff, " " * 6)
         default_environment = "drmaa"
         tpv_runner_destination_template = TPV_DESTINATION_DRMAA
     elif runner == Runner.CONDOR:
         additional_runners += CONDOR_RUNNER_TEMPLATE
-        additional_environments += CONDOR_ENVIRONMENT_TEMPLATE + indent(
-            environment_docker_stuff, " " * 6
-        )
+        additional_environments += CONDOR_ENVIRONMENT_TEMPLATE + indent(environment_docker_stuff, " " * 6)
         default_environment = "condor"
         tpv_runner_destination_template = TPV_DESTINATION_CONDOR
 
     if config.tpv:
         if galaxy_version < "25.0":
             tpv_environment = render(TPV_ENVIRONMENT_24_2_TEMPLATE, cwd=os.getcwd())
-            if (
-                not environment_docker_stuff
-                and tpv_runner_destination_template.endswith(":")
-            ):
+            if not environment_docker_stuff and tpv_runner_destination_template.endswith(":"):
                 environment_extras = " {}"
             else:
                 environment_extras = indent(environment_docker_stuff, "#     ")
 
-            tpv_environment += (
-                indent(tpv_runner_destination_template, "#   ") + environment_extras
-            )
+            tpv_environment += indent(tpv_runner_destination_template, "#   ") + environment_extras
         else:
-            if (
-                not environment_docker_stuff
-                and tpv_runner_destination_template.endswith(":")
-            ):
+            if not environment_docker_stuff and tpv_runner_destination_template.endswith(":"):
                 environment_extras = " {}"
             else:
                 environment_extras = indent(environment_docker_stuff, " " * 12)
             tpv_environment = (
-                TPV_ENVIRONMENT_25_0_TEMPLATE
-                + indent(tpv_runner_destination_template, " " * 10)
-                + environment_extras
+                TPV_ENVIRONMENT_25_0_TEMPLATE + indent(tpv_runner_destination_template, " " * 10) + environment_extras
             )
         if additional_environments:
             additional_environments += "\n"
@@ -372,9 +338,7 @@ def build_job_config(
         local_environment=local_environment,
         default_environment=default_environment,
     )
-    yaml.safe_load(
-        config_str
-    )  # try loading it just to assure we're building valid YAML
+    yaml.safe_load(config_str)  # try loading it just to assure we're building valid YAML
     return config_str
 
 
@@ -387,10 +351,7 @@ def create_docker_volumes(paths: Iterable[str]) -> Iterable[DockerVolume]:
         docker_volume = DockerVolume.from_str(path)
         if docker_volume.path in docker_volumes:
             # volume has been specified already, make sure we use "rw" if any of the modes are "rw"
-            if (
-                docker_volume.mode == "rw"
-                or docker_volumes[docker_volume.path].mode == "rw"
-            ):
+            if docker_volume.mode == "rw" or docker_volumes[docker_volume.path].mode == "rw":
                 docker_volumes[docker_volume.path].mode = "rw"
         else:
             docker_volumes[docker_volume.path] = docker_volume
@@ -398,9 +359,7 @@ def create_docker_volumes(paths: Iterable[str]) -> Iterable[DockerVolume]:
 
 
 def summarize(cli: str):
-    planemo_cli = (
-        cli.replace("--", "DOUBLE_DASH").replace("-", "_").replace("DOUBLE_DASH", "--")
-    )
+    planemo_cli = cli.replace("--", "DOUBLE_DASH").replace("-", "_").replace("DOUBLE_DASH", "--")
     as_argv = [x for x in cli.split() if x]
     config = config_args(as_argv)
     return f"""
