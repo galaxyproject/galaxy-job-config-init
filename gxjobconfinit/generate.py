@@ -22,8 +22,12 @@ TEMPLATE = """
 runners:
   local:
     load: galaxy.jobs.runners.local:LocalJobRunner
+{%- if local_workers %}
+    workers: {{ local_workers }}
+{%- else %}
     # modify the number of threads working on local jobs here
     # workers: 4
+{%- endif %}
 {{ additional_runners }}
 {{ handling_config}}
 
@@ -352,6 +356,7 @@ def build_job_config(
         local_environment=local_environment,
         default_environment=default_environment,
         handling_config=handling_config,
+        local_workers=config.local_workers,
     )
     yaml.safe_load(config_str)  # try loading it just to assure we're building valid YAML
     return config_str

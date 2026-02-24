@@ -41,6 +41,7 @@ class CliConfigArgs(TypedDict, total=False):
     singularity_sudo: NotRequired[Optional[bool]]
     singularity_sudo_cmd: NotRequired[Optional[str]]
     singularity_extra_volume: NotRequired[Optional[List[str]]]
+    local_workers: NotRequired[Optional[int]]
     tmp_dir: NotRequired[Optional[str]]
     all_in_one_handling: NotRequired[bool]
 
@@ -62,6 +63,7 @@ class ConfigArgs:
     singularity_sudo: Optional[bool] = None
     singularity_sudo_cmd: Optional[str] = None
     singularity_extra_volume: Optional[List[str]] = None
+    local_workers: Optional[int] = None
     tmp_dir: Optional[str] = None
     all_in_one_handling: Optional[bool] = False
 
@@ -83,6 +85,7 @@ class ConfigArgs:
             singularity_sudo=data.get("singularity_sudo", None),
             singularity_sudo_cmd=data.get("singularity_sudo_cmd", None),
             singularity_extra_volume=data.get("singularity_extra_volume", []),
+            local_workers=data.get("local_workers", None),
             tmp_dir=data.get("tmp_dir", "true"),
             all_in_one_handling=data.get("all_in_one_handling", False),
         )

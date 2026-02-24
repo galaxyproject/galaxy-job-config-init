@@ -173,6 +173,30 @@ def test_tmp_dir_and_all_in_one_combined():
     assert local_env["tmp_dir"] == "$CUSTOM_TMP"
 
 
+def test_local_workers_default():
+    """Test that local runner has commented workers by default."""
+    config = ConfigArgs.from_dict()
+    job_config = build_job_config(config)
+    assert "# workers: 4" in job_config
+    config_dict = yaml.safe_load(job_config)
+    local_runner = config_dict["runners"]["local"]
+    assert "workers" not in local_runner
+
+
+def test_local_workers_specified():
+    """Test that local runner workers can be explicitly set."""
+    config_dict = build_to_yaml(local_workers=8)
+    local_runner = config_dict["runners"]["local"]
+    assert local_runner["workers"] == 8
+
+
+def test_local_workers_one():
+    """Test that local runner workers can be set to 1."""
+    config_dict = build_to_yaml(local_workers=1)
+    local_runner = config_dict["runners"]["local"]
+    assert local_runner["workers"] == 1
+
+
 def test_summary():
     print(summary_markdown())
 
